@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { TProduct } from "./product.interface";
 import { Product } from "./product.model";
 
@@ -11,7 +12,14 @@ const findProductFromDB = async () => {
   return result;
 };
 
+const getSingleProduct = async (id: string) => {
+  const objectId = new mongoose.Types.ObjectId(id);
+  const result = await Product.findById(objectId);
+  return result;
+};
+
 export const ProductServices = {
   createProductIntoDB,
   findProductFromDB,
+  getSingleProduct,
 };

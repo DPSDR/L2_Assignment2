@@ -7,6 +7,9 @@ const router = express.Router();
 router.post("/products", ProductControlers.createProduct);
 
 // route for get the product data
-router.get("/products", ProductControlers.findProduct);
+router.get("/products", ProductControlers.getAllProduct);
+
+// route for getting specifc data through id
+router.get("/products/:productId", ProductControlers.getSingleProduct);
 
 export const ProductRoutes = router;

@@ -10,7 +10,7 @@ const createProduct = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: "Product is created successfully",
+      message: "Product created successfully!",
       data: result,
     });
   } catch (error) {
@@ -18,20 +18,36 @@ const createProduct = async (req: Request, res: Response) => {
   }
 };
 
-const findProduct = async (req: Request, res: Response) => {
+const getAllProduct = async (req: Request, res: Response) => {
   try {
     const result = await ProductServices.findProductFromDB();
     res.status(200).json({
       success: true,
-      message: "Products are retrieved successfully",
+      message: "Products fetched successfully!",
       data: result,
     });
   } catch (error) {
     console.log(error);
+  }
+};
+
+const getSingleProduct = async (req: Request, res: Response) => {
+  try {
+    const productId = req.params.productId;
+    const result = await ProductServices.getSingleProduct(productId);
+
+    res.status(200).json({
+      success: true,
+      message: "Product fetched successfully!",
+      data: result,
+    });
+  } catch (error) {
+    res.send(error);
   }
 };
 
 export const ProductControlers = {
   createProduct,
-  findProduct,
+  getAllProduct,
+  getSingleProduct,
 };
