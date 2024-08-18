@@ -15,7 +15,6 @@ export default tseslint.config(
       "no-undef": "error",
       "prefer-const": "error",
       "no-console": "warn",
-      indent: "error",
     },
   }
 );
