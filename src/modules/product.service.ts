@@ -18,8 +18,18 @@ const getSingleProduct = async (id: string) => {
   return result;
 };
 
+/* const updateProducById = async (id: string) => {
+  
+} */
+
+const deleteProduct = async (id: string) => {
+  const result = await Product.deleteOne({ _id: id });
+  return result;
+};
+
 export const ProductServices = {
   createProductIntoDB,
   findProductFromDB,
   getSingleProduct,
+  deleteProduct,
 };
