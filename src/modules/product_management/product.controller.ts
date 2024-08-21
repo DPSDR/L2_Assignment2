@@ -74,80 +74,41 @@ const getSingleProduct = async (req: Request, res: Response) => {
   }
 };
 
-/* const updateProduct = async (req: Request, res: Response) => {
+// update a product
+const updateProduct = async (req: Request, res: Response) => {
   try {
     const productId = req.params.productId;
-    const updates = req.body;
+    const product = await ProductServices.getSingleProduct(productId);
 
-    // If the request contains inventory updates with quantity changes
-    if (updates.inventory && updates.inventory.quantity !== undefined) {
-      const quantityChange = updates.inventory.quantity; // The change value from the request body
+    let updatedInventory: number;
+    // updatedInventory -= product?.inventory.quantity
+    updatedInventory = product?.inventory.quantity - 1;
 
-      // Update the quantity using aggregation logic
-      const updatedProduct = await Product.findOneAndUpdate(
-        { _id: productId },
-        [
-          {
-            $set: {
-              "inventory.quantity": {
-                $add: ["$inventory.quantity", quantityChange], // Add the existing quantity with the change value
-              },
-              "inventory.inStock": {
-                $cond: {
-                  if: {
-                    $gt: [{ $add: ["$inventory.quantity", quantityChange] }, 0],
-                  },
-                  then: true,
-                  else: false,
-                },
-              },
-            },
+    const updateResult = await Product.findByIdAndUpdate(
+      { _id: productId },
+      [
+        {
+          $set: {
+            "inventory.quantity": updatedInventory,
           },
-        ],
-        { new: true, runValidators: true }
-      );
+        },
+      ],
+      { new: true }
+    );
 
-      // Handle no product found
-      if (!updatedProduct) {
-        return res.status(404).json({
-          success: false,
-          message: "Product not found!",
-        });
-      }
-
-      res.status(200).json({
-        success: true,
-        message: "Product updated successfully!",
-        data: updatedProduct,
-      });
-    } else {
-      // If no inventory quantity changes, just update the other fields normally
-      const updatedProduct = await Product.findByIdAndUpdate(
-        productId,
-        { $set: updates },
-        { new: true, runValidators: true }
-      );
-
-      if (!updatedProduct) {
-        return res.status(404).json({
-          success: false,
-          message: "Product not found!",
-        });
-      }
-
-      res.status(200).json({
-        success: true,
-        message: "Product updated successfully!",
-        data: updatedProduct,
-      });
-    }
+    res.status(200).json({
+      success: true,
+      messange: "Product updated successfully!",
+      data: updateResult,
+    });
   } catch (err: any) {
+    // Handle any errors that occur during the update
     res.status(500).json({
       success: false,
       message: err.message,
     });
   }
-}; */
+};
 
 // delete a product from db
 const deleteProduct = async (req: Request, res: Response) => {
@@ -182,4 +143,5 @@ export const ProductControlers = {
   getAllProduct,
   getSingleProduct,
   deleteProduct,
+  updateProduct,
 };
