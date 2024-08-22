@@ -1,14 +1,20 @@
 import { Request, Response } from "express";
 import { ProductServices } from "./product.service";
 import { Product } from "./product.model";
+import { ProductSchema } from "./product.zod.valadation";
 
 // create a new product
 const createProduct = async (req: Request, res: Response) => {
   try {
     const { product } = req.body;
 
+    // validate data with zod
+    const validateProductData = ProductSchema.parse(product);
+
     // call service to create data
-    const result = await ProductServices.createProductIntoDB(product);
+    const result = await ProductServices.createProductIntoDB(
+      validateProductData
+    );
 
     res.status(200).json({
       success: true,
@@ -60,6 +66,14 @@ const getSingleProduct = async (req: Request, res: Response) => {
     const productId = req.params.productId;
     const result = await ProductServices.getSingleProduct(productId);
 
+    if (productId && result === null) {
+      return res.status(404).json({
+        success: false,
+        message: "Product does not exist.",
+        data: null,
+      });
+    }
+
     res.status(200).json({
       success: true,
       message: "Product fetched successfully!",
@@ -81,7 +95,8 @@ const updateProduct = async (req: Request, res: Response) => {
     const product = await ProductServices.getSingleProduct(productId);
 
     let updatedInventory: number;
-    // updatedInventory -= product?.inventory.quantity
+
+    // eslint-disable-next-line prefer-const
     updatedInventory = product?.inventory.quantity - 1;
 
     const updateResult = await Product.findByIdAndUpdate(

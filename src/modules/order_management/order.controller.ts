@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { OrderService } from "./order.services";
 import { Order } from "./order.model";
 import { Product } from "../product_management/product.model";
+import OrderSchema from "./order.zod.validation";
 
 const createNewOrder = async (req: Request, res: Response) => {
   try {
@@ -32,14 +33,17 @@ const createNewOrder = async (req: Request, res: Response) => {
 
     // Update the inStock property based on the remaining quantity
     if (product.inventory.quantity <= 0) {
-      product.inventory.instock = false;
+      product.inventory.inStock = false;
     }
 
     // Save the updated product
     await product.save();
 
+    // validate the order
+    const validateOrderData = OrderSchema.parse(req.body);
+
     // create the order
-    const result = await OrderService.createOrderIntoDB(req.body);
+    const result = await OrderService.createOrderIntoDB(validateOrderData);
 
     res.status(200).json({
       success: true,
@@ -47,7 +51,6 @@ const createNewOrder = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    console.log(error);
     res.status(500).json({
       success: false,
       message: error.message,

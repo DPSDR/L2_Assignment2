@@ -10,7 +10,7 @@ const VariantSchema = new Schema<TVarients>({
 // Mongoose schema for TInventory
 const InventorySchema = new Schema<TInventory>({
   quantity: { type: Number, required: true },
-  instock: { type: Boolean, default: true, required: true },
+  inStock: { type: Boolean, default: true, required: true },
 });
 
 // Mongoose schema for TProduct
