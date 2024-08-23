@@ -97,7 +97,7 @@ const updateProduct = async (req: Request, res: Response) => {
     let updatedInventory: number;
 
     // eslint-disable-next-line prefer-const
-    updatedInventory = product?.inventory.quantity - 1;
+    updatedInventory = (product?.inventory.quantity as number) - 1;
 
     const updateResult = await Product.findByIdAndUpdate(
       { _id: productId },
